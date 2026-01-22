@@ -1,29 +1,33 @@
-const dotenv = require('dotenv');
+import dotenv from 'dotenv';
 
 dotenv.config();
 
-app = require("./app");
+import app from "./app.js";
 
-const connectDB = require('./config/db');
+import connectDB from './config/db.js';
+
+import mongoose from 'mongoose';
 
 const PORT = process.env.PORT || 3000;
+
+let server;
 
 // Connect to MongoDB
 connectDB();
 
-app.listen(PORT, ()=> {
+server = app.listen(PORT, ()=> {
     console.log("server is running on port" + `${PORT}`);
 })
 
 process.on('SIGINT', async () => {
   console.log('SIGINT received. Closing MongoDB connection...');
-  await require('mongoose').connection.close();
+  await mongoose.connection.close();
   process.exit(0);
 });
 
 process.on('SIGTERM', async () => {
   console.log('SIGTERM received. Shutting down gracefully...');
-  await require('mongoose').connection.close();
+  await mongoose.connection.close();
   server.close(() => {
     process.exit(0);
   });

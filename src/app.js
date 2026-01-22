@@ -1,7 +1,8 @@
-const express = require('express');
+import express from 'express';
 const app = express();
-const userRoutes = require('./routes/userRoutes');
-const errorHandler = require('./middlewares/errorMiddleware');
+import userRoutes from './routes/userRoutes.js';
+import authRoutes from './routes/authRoutes.js';
+import errorHandler from './middlewares/errorMiddleware.js';
 
 app.get('/health', (req, res) => {
   res.status(200).json({
@@ -17,6 +18,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}))
 
 app.use('/api/v1', userRoutes);
+app.use('/auth', authRoutes);
 
 //Base API routes
 app.get("/api/v1",(req, res)=>{
@@ -30,4 +32,4 @@ app.get("/api/v1",(req, res)=>{
 // Error middleware (LAST)
 app.use(errorHandler);
 
-module.exports = app;
+export default app;

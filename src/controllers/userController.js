@@ -1,7 +1,7 @@
-const AppError = require('../utlis/AppError');
-const catchAsync = require('../utlis/catchAsync');
+import AppError from '../utlis/AppError.js';
+import catchAsync from '../utlis/catchAsync.js';
 
-exports.getUser = catchAsync(async (req, res, next) => {
+export const getUser = catchAsync(async (req, res, next) => {
   const user = null; // simulate failure
 
   if (!user) {
@@ -13,3 +13,5 @@ exports.getUser = catchAsync(async (req, res, next) => {
     data: user
   });
 });
+
+export default { getUser };
