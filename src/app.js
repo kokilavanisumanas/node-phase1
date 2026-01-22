@@ -1,7 +1,6 @@
 import express from 'express';
 const app = express();
-import userRoutes from './routes/userRoutes.js';
-import authRoutes from './routes/authRoutes.js';
+import { userRoutes, authRoutes } from './routes/indexRoutes.js';
 import errorHandler from './middlewares/errorMiddleware.js';
 
 app.get('/health', (req, res) => {
