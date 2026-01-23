@@ -1,9 +1,10 @@
 import bcrypt from 'bcrypt';
 import User from '../models/userModel.js';
 import { generateToken } from '../utlis/jwt.js';
+import catchAsync from '../utlis/catchAsync.js';
 
 export const registerUser = async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, role } = req.body;
 
   /**
    * 1. Validate input
@@ -39,6 +40,7 @@ export const registerUser = async (req, res) => {
     name,
     email,
     password: hashedPassword,
+    role: role || 'user',
   });
 
   /**
@@ -61,3 +63,44 @@ export const registerUser = async (req, res) => {
     },
   });
 };
+
+
+export const login = catchAsync(async (req, res) => {
+  const { email, password } = req.body;
+
+  // 1️⃣ Check input
+  if (!email || !password) {
+    return res.status(400).json({
+      success: false,
+      message: 'Email and password are required',
+    });
+  }
+
+  // 2️⃣ Find user (include password explicitly)
+  const user = await User.findOne({ email }).select('+password');
+
+  if (!user) {
+    return res.status(401).json({
+      success: false,
+      message: 'Invalid credentials',
+    });
+  }
+
+  // 3️⃣ Compare password
+  const isMatch = await bcrypt.compare(password, user.password);
+
+  if (!isMatch) {
+    return res.status(401).json({
+      success: false,
+      message: 'Invalid credentials',
+    });
+  }
+
+  // 4️⃣ Generate token
+  const token = generateToken(user._id);
+
+  return res.status(200).json({
+    success: true,
+    token,
+  });
+});
